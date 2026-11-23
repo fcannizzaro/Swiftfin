@@ -42,7 +42,7 @@ extension VideoPlayer.PlaybackControls.Toolbar {
             var filteredButtons = rawButtons
 
             #if os(iOS)
-            if !isChromecastEnabled {
+            if !isChromecastEnabled || mediaSession.isDownloadedPlayback {
                 filteredButtons.removeAll(equalTo: .playbackDestination)
             }
             #elseif os(tvOS)

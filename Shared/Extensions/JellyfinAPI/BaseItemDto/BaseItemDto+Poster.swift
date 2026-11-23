@@ -247,6 +247,12 @@ private struct BaseItemDtoPosterContextMenu: View {
             }
         }
 
+        #if os(iOS)
+        if item.type == .episode {
+            EpisodeDownloadActions(item: item)
+        }
+        #endif
+
         ShuffleButton(item: item)
 
         if item.canBePlayed {

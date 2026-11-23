@@ -21,6 +21,7 @@ final class MediaPlayerItem {
     let videoStreams: [MediaStream]
 
     let chapters: [ChapterInfo.FullInfo]
+    let download: DownloadedEpisode.Playback?
     let deviceProfile: DeviceProfile
     private(set) var indexMap: MediaTrackIndexMap
 
@@ -125,7 +126,8 @@ final class MediaPlayerItem {
         chapters: [ChapterInfo.FullInfo],
         temporaryFiles: PlaybackTemporaryFiles,
         previewImageProvider: PreviewImageProvider?,
-        thumbnailProvider: ThumbnailProvider? = nil
+        thumbnailProvider: ThumbnailProvider? = nil,
+        download: DownloadedEpisode.Playback? = nil
     ) {
         guard let audioStreamIndex = configuration.audioStreamIndex,
               configuration.subtitleStreamIndex != nil,
@@ -134,7 +136,12 @@ final class MediaPlayerItem {
               configuration.automaticTrackDefaults != nil
         else { preconditionFailure("MediaPlayerItem requires a resolved playback configuration") }
 
-        self.sharedItem = SharedBaseItem(wrappedValue: baseItem).entry
+        if let download {
+            self.sharedItem = ItemEntry(item: ItemRecord(id: download.episode.id, presentationValue: baseItem))
+        } else {
+            self.sharedItem = SharedBaseItem(wrappedValue: baseItem).entry
+        }
+        self.download = download
         self.configuration = configuration
         self.runtimeTicks = mediaSource.runTimeTicks ?? baseItem.runTimeTicks
         self.mediaSource = mediaSource
@@ -177,7 +184,7 @@ final class MediaPlayerItem {
     func activate() {
         guard let mediaSession, mediaSession.playbackItem === self else { return }
 
-        if baseItem.mediaType != .audio {
+        if download == nil, baseItem.mediaType != .audio {
             let segments = MediaSegmentObserver()
             self.segments = segments
             segmentObservation = segments.observe(mediaSession)
@@ -193,9 +200,11 @@ final class MediaPlayerItem {
     }
 
     func resumingIntent(at position: Duration) -> PlaybackIntent {
-        PlaybackIntent(item: baseItem, configuration: with(configuration) {
-            $0.startSeconds = max(.zero, position)
-        })
+        let configuration = with(configuration) { $0.startSeconds = max(.zero, position) }
+        if let download {
+            return PlaybackIntent(download: download, configuration: configuration)
+        }
+        return PlaybackIntent(item: baseItem, configuration: configuration)
     }
 
     var canSelectTracks: Bool {
@@ -204,7 +213,7 @@ final class MediaPlayerItem {
 
     /// Decides whether a track change can be performed by the player in place, or whether the server must produce a new stream.
     func isRebuildRequired(type: MediaStreamType, from oldIndex: Int?, to newIndex: Int?) -> Bool {
-        guard oldIndex != newIndex else { return false }
+        guard download == nil, oldIndex != newIndex else { return false }
 
         if mediaSession?.isRemotePlayback == true, type == .audio || type == .subtitle {
             return true

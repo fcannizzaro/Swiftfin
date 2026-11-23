@@ -489,9 +489,12 @@ extension MPVMediaPlayer: MediaPlayerExternalSubtitleProviding {
             return await pending.value
         }
 
-        guard let client = mediaSession?.userSession.client, let url = stream.url(with: client) else {
-            return false
+        let url: URL? = if let download = item.download {
+            download.episode.subtitleFilenames[index].map { download.directory.appending(path: $0) }
+        } else {
+            mediaSession.map(\.userSession.client).flatMap { stream.url(with: $0) }
         }
+        guard let url else { return false }
 
         let descriptor = MPVExternalTrack(
             url: url,

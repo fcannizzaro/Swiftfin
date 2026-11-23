@@ -87,7 +87,7 @@ final class MediaPlayerManager {
         stop()
 
         var intent = intent
-        if intent.queue == nil, intent.item.type == .episode {
+        if intent.download == nil, intent.queue == nil, intent.item.type == .episode {
             intent.queue = EpisodeMediaPlayerQueue()
         }
 

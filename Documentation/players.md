@@ -9,6 +9,16 @@ Swiftfin offers two player engines: **MPV** and **AVPlayer**. MPV is the default
 
 ---
 
+## Download episodes on iPhone and iPad
+
+Touch and hold an episode and choose **Download**. The Jellyfin account needs permission to download media. Open **Downloads** to check progress, retry a failed transfer, or find an episode to watch offline.
+
+Once the video transfer starts, iOS can keep it running when you switch apps or lock the device. Force-quitting Swiftfin cancels the transfer.
+
+Swiftfin saves the original video, available artwork, episode details, and any external text subtitles it can retrieve. Downloads play with MPV and keep their resume position on the device. To free space, touch and hold a saved episode and choose **Remove Download**. Deleting a saved account or server also removes its downloads.
+
+---
+
 ## Feature Support
 
 | Feature                   | MPV   | AVPlayer |

@@ -12,8 +12,19 @@ import JellyfinAPI
 struct PlaybackIntent {
 
     let entry: ItemEntry
+    let download: DownloadedEpisode.Playback?
     var queue: any MediaPlayerQueue?
     var configuration: MediaPlaybackConfiguration
+
+    init(download: DownloadedEpisode.Playback) {
+        self.init(download: download, configuration: .init())
+    }
+
+    init(download: DownloadedEpisode.Playback, configuration: MediaPlaybackConfiguration) {
+        self.entry = ItemEntry(item: ItemRecord(id: download.episode.id, presentationValue: download.episode.item))
+        self.download = download
+        self.configuration = configuration
+    }
 
     var item: BaseItemDto {
         entry.snapshot
@@ -29,6 +40,7 @@ struct PlaybackIntent {
 
     init(item: BaseItemDto, configuration: MediaPlaybackConfiguration, queue: any MediaPlayerQueue? = nil) {
         self.entry = SharedBaseItem(wrappedValue: item).entry
+        self.download = nil
         self.queue = queue
         self.configuration = configuration
     }

@@ -71,7 +71,8 @@ struct VideoPlayer: View {
         }
         .onAppear {
             if mediaSession.player == nil, mediaSession.state != .stopped {
-                mediaSession.attach(player: Defaults[.VideoPlayer.mediaPlayerType].makePlayer())
+                let playerType: MediaPlayerType = mediaSession.isDownloadedPlayback ? .mpv : Defaults[.VideoPlayer.mediaPlayerType]
+                mediaSession.attach(player: playerType.makePlayer())
             }
         }
         .prefersStatusBarHidden(UIDevice.isPad || !viewState.isPresentingControls)

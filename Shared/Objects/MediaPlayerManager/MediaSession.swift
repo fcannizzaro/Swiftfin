@@ -187,6 +187,10 @@ final class MediaSession {
         return playbackState.isBuffering ? .buffering : nil
     }
 
+    var isDownloadedPlayback: Bool {
+        intent.download != nil
+    }
+
     var item: BaseItemDto {
         playbackItem?.baseItem ?? intent.item
     }
@@ -268,7 +272,8 @@ final class MediaSession {
     /// Re-negotiate for each destination, retaining the local engine and desired transport state.
     @discardableResult
     func transfer(to destination: any MediaPlayer) -> Task<Void, Never>? {
-        guard let player,
+        guard !isDownloadedPlayback,
+              let player,
               player !== destination,
               state != .stopped,
               state != .error,
@@ -499,7 +504,9 @@ final class MediaSession {
               !isSeeking,
               !item.isLiveStream else { return }
         guard let queue, userSession.userData.configuration?.enableNextEpisodeAutoPlay == true else {
+            let download = playbackItem?.download
             stop()
+            download?.savePosition(.zero)
             return
         }
 
@@ -745,6 +752,9 @@ final class MediaSession {
 extension MediaSession {
 
     func sceneDidEnterBackground() {
+        if hasReportedPlayback {
+            playbackItem?.download?.savePosition(observedSeconds)
+        }
         playbackTransitions.sceneDidEnterBackground()
     }
 

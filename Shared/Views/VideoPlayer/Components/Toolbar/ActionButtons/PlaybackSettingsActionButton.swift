@@ -19,7 +19,7 @@ extension VideoPlayer.PlaybackControls.Toolbar.ActionButtons {
         private var mediaSession
 
         static func isAvailable(for item: MediaPlayerItem?) -> Bool {
-            guard let item else { return false }
+            guard let item, item.download == nil else { return false }
 
             return item.baseItem.mediaType == .video
                 || (item.baseItem.mediaSources?.count ?? 0) > 1

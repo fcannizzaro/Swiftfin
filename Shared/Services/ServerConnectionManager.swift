@@ -257,6 +257,12 @@ extension ServerConnectionManager: UserSessionService {
     func willStart(userSession: UserSession) async {
         self.userSession = userSession
 
+        #if os(iOS)
+        // The path monitor can probe in the background while saved episodes are available.
+        guard userSession.episodeDownloads.episodes.isEmpty else { return }
+
+        #endif
+
         await resolveActiveConnection()
     }
 

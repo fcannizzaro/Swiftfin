@@ -282,6 +282,8 @@ internal enum L10n {
   internal static let buttons = L10n.tr("Localizable", "buttons", fallback: "Buttons")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel", fallback: "Cancel")
+  /// Cancel Download
+  internal static let cancelDownload = L10n.tr("Localizable", "cancelDownload", fallback: "Cancel Download")
   /// Cancelling...
   internal static let cancelling = L10n.tr("Localizable", "cancelling", fallback: "Cancelling...")
   /// Cancel Recording
@@ -628,6 +630,10 @@ internal enum L10n {
   internal static let doubleTouch = L10n.tr("Localizable", "doubleTouch", fallback: "Double touch")
   /// Download
   internal static let download = L10n.tr("Localizable", "download", fallback: "Download")
+  /// Downloaded
+  internal static let downloaded = L10n.tr("Localizable", "downloaded", fallback: "Downloaded")
+  /// Downloading…
+  internal static let downloadingEpisode = L10n.tr("Localizable", "downloadingEpisode", fallback: "Downloading…")
   /// Downloads
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
   /// Dropped frames
@@ -1168,6 +1174,8 @@ internal enum L10n {
   internal static let noActivity = L10n.tr("Localizable", "noActivity", fallback: "No activity")
   /// No profiles defined. Playback issues may occur.
   internal static let noDeviceProfileWarning = L10n.tr("Localizable", "noDeviceProfileWarning", fallback: "No profiles defined. Playback issues may occur.")
+  /// No Downloads
+  internal static let noDownloads = L10n.tr("Localizable", "noDownloads", fallback: "No Downloads")
   /// No episodes available
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
   /// No items
@@ -1530,6 +1538,8 @@ internal enum L10n {
   internal static let remoteControl = L10n.tr("Localizable", "remoteControl", fallback: "Remote control")
   /// Remove all
   internal static let removeAll = L10n.tr("Localizable", "removeAll", fallback: "Remove all")
+  /// Remove Download
+  internal static let removeDownload = L10n.tr("Localizable", "removeDownload", fallback: "Remove Download")
   /// Remove from favorites
   internal static let removeFromFavorites = L10n.tr("Localizable", "removeFromFavorites", fallback: "Remove from favorites")
   /// Remux
@@ -1600,6 +1610,8 @@ internal enum L10n {
   internal static let retain = L10n.tr("Localizable", "retain", fallback: "Retain")
   /// Retry
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
+  /// Retry Download
+  internal static let retryDownload = L10n.tr("Localizable", "retryDownload", fallback: "Retry Download")
   /// Reviews
   internal static let reviews = L10n.tr("Localizable", "reviews", fallback: "Reviews")
   /// Rewatching

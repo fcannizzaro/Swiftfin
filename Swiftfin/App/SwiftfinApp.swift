@@ -12,6 +12,9 @@ import UIKit
 @main
 struct SwiftfinApp: App {
 
+    @UIApplicationDelegateAdaptor(EpisodeDownloadAppDelegate.self)
+    private var downloadAppDelegate
+
     init() {
         Self.configure()
 

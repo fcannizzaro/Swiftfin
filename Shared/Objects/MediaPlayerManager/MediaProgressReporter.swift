@@ -56,6 +56,13 @@ final class MediaProgressReporter {
 
         self.item = nil
 
+        if let download = item.download {
+            if let position = mediaSession?.observedSeconds {
+                download.savePosition(position)
+            }
+            return
+        }
+
         var info = PlaybackStopInfo()
         info.itemID = item.baseItem.id
         info.liveStreamID = item.mediaSource.liveStreamID
@@ -69,6 +76,13 @@ final class MediaProgressReporter {
 
     private func report(isStart: Bool = false) {
         guard let item else { return }
+
+        if let download = item.download {
+            if !isStart, let position = mediaSession?.observedSeconds {
+                download.savePosition(position)
+            }
+            return
+        }
 
         var info = PlaybackStateInfo()
         info.audioStreamIndex = item.selectedAudioStreamIndex

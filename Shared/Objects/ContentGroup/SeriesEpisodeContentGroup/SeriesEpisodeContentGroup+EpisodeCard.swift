@@ -219,6 +219,15 @@ extension SeriesEpisodeContentGroup {
             VStack(alignment: .leading) {
                 artworkButton
                     .posterAspectRatio(.landscape, contentMode: .fit)
+                    #if os(iOS)
+                    .overlay(alignment: .topLeading) {
+                        if let contextMenuItem {
+                            EpisodeDownloadStatus(item: contextMenuItem)
+                                .padding(8)
+                                .allowsHitTesting(false)
+                        }
+                    }
+                    #endif
 
                 Button(action: contentAction) {
                     EpisodeMetadataView(

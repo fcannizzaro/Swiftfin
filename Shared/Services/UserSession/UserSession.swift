@@ -16,6 +16,11 @@ final class UserSession {
     let server: ServerState
     let user: UserState
 
+    #if os(iOS)
+    @MainActor
+    private(set) lazy var episodeDownloads = EpisodeBackgroundDownloads.shared.store(serverID: server.id, userID: user.id)
+    #endif
+
     @MainActor
     private(set) lazy var items = ItemStore()
 
@@ -104,6 +109,9 @@ final class UserSession {
 
     @MainActor
     func willStop() {
+        #if os(iOS)
+        episodeDownloads.cancelAll()
+        #endif
         itemChanges = nil
         userChanges.removeAll()
         userRefresh?.cancel()

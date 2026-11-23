@@ -9,10 +9,44 @@
 import Foundation
 import JellyfinAPI
 import Logging
+import UIKit
 
 /// Resolves one item identity and its configuration into a playable item.
 @MainActor
 enum MediaPlayerItemResolver {
+
+    private static func resolveDownload(
+        _ download: DownloadedEpisode.Playback,
+        configuration: MediaPlaybackConfiguration,
+        profile: PlaybackProfile
+    ) throws -> MediaPlayerItem {
+        guard profile == .local(.mpv), FileManager.default.isReadableFile(atPath: download.videoURL.path) else {
+            throw URLError(.fileDoesNotExist)
+        }
+
+        let item = download.episode.item
+        let source = download.episode.source
+        var configuration = configuration
+        configuration.startSeconds = configuration.startSeconds ?? max(.zero, (download.position ?? .zero) - configuration.resumeOffset)
+        configuration.prepare(for: item, source: source, profile: profile)
+        configuration.finish(source: source, initialSource: source)
+
+        return MediaPlayerItem(
+            baseItem: item,
+            mediaSource: source,
+            playSessionID: UUID().uuidString,
+            url: download.videoURL,
+            configuration: configuration,
+            deviceProfile: profile.deviceProfile(configuration: configuration, maxBitrate: 0, mediaSource: source),
+            chapters: [],
+            temporaryFiles: PlaybackTemporaryFiles(accessToken: nil),
+            previewImageProvider: nil,
+            thumbnailProvider: {
+                UIImage(contentsOfFile: download.thumbnailURL.path) ?? UIImage(contentsOfFile: download.posterURL.path)
+            },
+            download: download
+        )
+    }
 
     static func resolve(
         _ intent: PlaybackIntent,
@@ -20,6 +54,10 @@ enum MediaPlayerItemResolver {
         userSession: UserSession
     ) async throws -> MediaPlayerItem {
         try Task.checkCancellation()
+        if let download = intent.download {
+            return try resolveDownload(download, configuration: intent.configuration, profile: profile)
+        }
+
         guard var initialItem = intent.entry.value else { throw ItemStore.StoreError.itemUnavailable }
 
         if initialItem.type == .program {
